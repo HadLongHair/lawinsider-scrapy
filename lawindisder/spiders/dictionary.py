@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from bs4 import BeautifulSoup as BS
+# from bs4 import BeautifulSoup as BS
 from lawindisder.items import ClauseItem
 from datetime import datetime
 

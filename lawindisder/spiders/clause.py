@@ -23,13 +23,14 @@ class LawClauseScrapy(scrapy.Spider):
             # item['referer'] = response.request.headers.get('Referer', None).decode('utf-8')
             item['url'] = list_url.extract()
             try:
-                item['clause'] = raw_clause.css('a::text').extract()[1].replace('\n', '')
+                item['clause'] = raw_clause[i].css('a::text').extract()[1].replace('\n', '')
             except:
                 item['clause'] = None
                 print('~Fail~')
             print('clause', ' ==================== > :', item['clause'])
             request = scrapy.Request(self.bases + list_url.extract(), callback=self.parse_detail)
             request.meta['item'] = item
+            # request.meta['proxy'] = 'http://crystal.ge:9svqswvf@117.48.199.217:16818'
             yield request
 
         # follow pagination links
@@ -43,6 +44,51 @@ class LawClauseScrapy(scrapy.Spider):
 
     def parse_detail(self, response):
         item = response.meta['item']
+
+        # related clause
+        related_clauses = response.css('#sidebar-related-clauses .list-group-item a')
+        item['related_clauses'] = []
+        for i, it in enumerate(related_clauses):
+            # 合同链接1-3
+            item['related_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
+                                            'title': it.css('a::text').extract_first()
+                                            })
+        # related contacts
+        related_contacts = response.css('#sidebar-related-contracts-by-clause .list-group-item a')
+        item['related_contracts'] = []
+        for i, it in enumerate(related_contacts):
+            # 合同链接1-3
+            item['related_contracts'].append({'url': it.css('a::attr(href)').extract_first(),
+                                              'title': it.css('a::text').extract_first()
+                                              })
+
+        # parent clause
+        parent_clauses = response.css('#sidebar-parent-clauses .list-group-item a')
+        item['parent_clauses'] = []
+        for i, it in enumerate(parent_clauses):
+            # 合同链接1-3
+            item['parent_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
+                                           'title': it.css('a::text').extract_first()
+                                           })
+
+        # sub clause
+        sub_clauses = response.css('#sidebar-child-clauses .list-group-item a')
+        item['sub_clauses'] = []
+        for i, it in enumerate(sub_clauses):
+            # 合同链接1-3
+            item['sub_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
+                                        'title': it.css('a::text').extract_first()
+                                        })
+
+            # 所有修改版本链接
+            # if cs.css('.all-variations-btn a'):
+            #     try:
+            #         variations = cs.css('.all-variations-btn a')[0]
+            #         item['variations_url'] = contract_url_4.css('a::attr(href)').extract_first()
+            #         item['variations_title'] = contract_url_4.css('a::text').extract_first()
+            #     except:
+            #         print('Error Log')
+
         clause_snippet = response.css('.list-group-item.clause-snippet')
         # ref
         for cs in clause_snippet:
@@ -58,65 +104,18 @@ class LawClauseScrapy(scrapy.Spider):
             item['sample_contracts'] = []
             for i, it in enumerate(instance_tags):
                 # 合同链接1-3
-                print('sample_contracts oooooooooooooooooooooo')
                 item['sample_contracts'].append({'url': it.css('a::attr(href)').extract_first(),
                                                  'title': it.css('a::text').extract_first()
                                                  })
 
-        # related clause
-        related_clauses = response.css('#sidebar-related-clauses .list-group-item a')
-        item['related_clauses'] = []
-        for i, it in enumerate(related_clauses):
-            # 合同链接1-3
-            print('related_clauses oooooooooooooooooooooo')
-            item['related_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
-                                            'title': it.css('a::text').extract_first()
-                                            })
-        # related contacts
-        related_contacts = response.css('#sidebar-related-contracts-by-clause .list-group-item a')
-        item['related_contracts'] = []
-        for i, it in enumerate(related_contacts):
-            # 合同链接1-3
-            print('related_contacts oooooooooooooooooooooo')
-            item['related_contracts'].append({'url': it.css('a::attr(href)').extract_first(),
-                                              'title': it.css('a::text').extract_first()
-                                              })
-
-        # parent clause
-        parent_clauses = response.css('#sidebar-parent-clauses .list-group-item a')
-        item['parent_clauses'] = []
-        for i, it in enumerate(parent_clauses):
-            # 合同链接1-3
-            print('parent_clauses oooooooooooooooooooooo')
-            item['parent_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
-                                           'title': it.css('a::text').extract_first()
-                                           })
-
-        # sub clause
-        sub_clauses = response.css('#sidebar-child-clauses .list-group-item a')
-        item['sub_clauses'] = []
-        for i, it in enumerate(sub_clauses):
-            # 合同链接1-3
-            print('sub_clauses oooooooooooooooooooooo')
-            item['sub_clauses'].append({'url': it.css('a::attr(href)').extract_first(),
-                                        'title': it.css('a::text').extract_first()
-                                        })
-
-            # 所有修改版本链接
-            # if cs.css('.all-variations-btn a'):
-            #     try:
-            #         variations = cs.css('.all-variations-btn a')[0]
-            #         item['variations_url'] = contract_url_4.css('a::attr(href)').extract_first()
-            #         item['variations_title'] = contract_url_4.css('a::text').extract_first()
-            #     except:
-            #         print('Error Log')
-        item['added_time'] = datetime.utcnow()
-        item['latest_update'] = datetime.utcnow()
-        yield item
+            item['added_time'] = datetime.utcnow()
+            item['latest_update'] = datetime.utcnow()
+            yield item
 
         next_href = response.css('#pagination .next a::attr(href)')
         for n in next_href:
             if n:
+                # response.meta['proxy'] = 'http://crystal.ge:9svqswvf@117.48.199.217:16818'
                 yield response.follow('https://www.lawinsider.com' + n.extract(), self.parse_detail)
             else:
                 print('Next Clause Ref...')

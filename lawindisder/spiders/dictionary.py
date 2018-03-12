@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from bs4 import BeautifulSoup as BS
 from lawindisder.items import ClauseItem
 from datetime import datetime
 
@@ -8,7 +9,7 @@ class LawClauseScrapy(scrapy.Spider):
     name = 'law_dictionary'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/dictionary/a']
+    start_urls = ['https://www.lawinsider.com/dictionary/c']
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):
@@ -44,28 +45,21 @@ class LawClauseScrapy(scrapy.Spider):
     def parse_detail(self, response):
         item = response.meta['item']
         papers = response.css('.col-lg-9.col-md-9.col-sm-12.col-xs-12 .paper')
+        # Definition
         try:
             definitions = papers[0].css('ol li.snippet-content')
+            item['definition'] = {'title': papers[0].css('h1::text').extract()}
+            texts = []
             for definition in definitions:
                 try:
                     definition_text = definition.css('li::text').extract().replace('\n', '')
                 except:
                     definition_text = None
                     print("No text")
-                item['definition_text'] = item['dictionary'] + definition_text
-
-                # 合同样例
-                instance_tags = definition.css('.instance-tag a')
-                item['sample_contracts'] = []
-                for i, it in enumerate(instance_tags):
-                    # 合同链接1-3
-                    print('sample_contracts oooooooooooooooooooooo')
-                    item['sample_contracts'].append({'url': it.css('a::attr(href)').extract_first(),
-                                                     'title': it.css('a::text').extract_first()
-                                                     })
+                texts.append(item['dictionary'] + definition_text)
+            item['definition']['text'] = texts
         except:
             print('No papers')
-        # Definition
 
 
         # related definitions

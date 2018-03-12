@@ -50,6 +50,7 @@ class LawindisderSpiderMiddleware(object):
 
         # Must return only requests (not items).
         for r in start_requests:
+            r.meta['proxy'] = 'http://crystal.ge:9svqswvf@117.48.199.217:16818'
             yield r
 
     def spider_opened(self, spider):
@@ -79,6 +80,9 @@ class LawindisderDownloaderMiddleware(object):
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
         return None
+        # request.meta['proxy'] = 'http://crystal.ge:9svqswvf@117.48.199.217:16818'
+        # print('====')
+        # return request
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

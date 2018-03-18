@@ -76,7 +76,7 @@ class LawDictionaryScrapy(RedisSpider):
         item['example'] = []
         example_list = []
         try:
-            examples = papers[0].css('ol li::text').extract()
+            examples = papers[1].css('ol li::text').extract()
             for example in examples:
                 try:
                     example_text = example.replace('\n', '')
@@ -89,7 +89,21 @@ class LawDictionaryScrapy(RedisSpider):
 
         item['example'] = example_list
 
-        # related definitions
+        # Contract Tags TODO
+        item['contract_tags'] = []
+        contract_tag = {}
+        try:
+            contract_tags = papers[2].css('h3')
+            contract_tags_text = papers[2]
+            for i in contract_tags:
+                contract_tag['name'] = i.css('a::text').extract_first()
+                contract_tag['url'] = i.css('a::attr(href)').extract_first()
+            for j in contract_tags_text:
+                contract_tag['text'] = j.css('string::text').extract_first() + j.css('::text').extract_first()
+        except:
+            pass
+
+        # Related Definitions
         related_definitions = response.css('.paper-sidebar .list-group .list-group-item a')
         item['related_definitions'] = []
         for i, it in enumerate(related_definitions):

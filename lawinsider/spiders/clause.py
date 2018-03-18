@@ -108,8 +108,8 @@ class LawClauseScrapy(scrapy.Spider):
                                                  'title': it.css('a::text').extract_first()
                                                  })
 
-            item['added_on'] = datetime.utcnow()
-            item['last_updated'] = datetime.utcnow()
+            item['added_time'] = datetime.utcnow()
+            item['latest_update'] = datetime.utcnow()
             yield item
 
         next_href = response.css('#pagination .next a::attr(href)')

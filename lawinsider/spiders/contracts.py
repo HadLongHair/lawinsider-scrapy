@@ -13,12 +13,13 @@ logging.basicConfig(format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 
-class LawDictionaryScrapy(scrapy.Spider):
+# class LawDictionaryScrapy(scrapy.Spider):
+class LawDictionaryScrapy(RedisSpider):
     name = 'law_contracts'
 
     allowed_domains = ['www.lawinsider.com']
     # start_urls = ['https://www.lawinsider.com/tags/a']
-    redis_key = 'dictionary:start_urls'
+    redis_key = 'contracts:start_urls'
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):
@@ -89,9 +90,10 @@ class LawDictionaryScrapy(scrapy.Spider):
         except:
             pass
 
-        # contract_content = response.css('.row.contract-content')
-        # item['contract_content_html'] = contract_content.extract_first()
-        # item['contract_content'] = ''.join(contract_content.css('.row.contract-content *::text').extract())
+        # contract_content
+        contract_content = response.css('.row.contract-content')
+        item['contract_content_html'] = contract_content.extract_first()
+        item['contract_content'] = ''.join(contract_content.css('.row.contract-content *::text').extract())
 
         # sidebar-similar-contracts
         item['similar_contracts'] = []
@@ -116,7 +118,6 @@ class LawDictionaryScrapy(scrapy.Spider):
         for f in items_found:
             item['items_found'].append(
                 {'url': f.css('::attr(href)').extract_first(), 'title': f.css('::text').extract_first()})
-            pass
         # tags
         item['label'] = []
         tags = response.css('.tags li a')

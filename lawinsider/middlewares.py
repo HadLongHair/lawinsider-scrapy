@@ -48,9 +48,9 @@ class LawinsiderSpiderMiddleware(object):
         # similarly to the process_spider_output() method, except
         # that it doesn’t have a response associated.
 
+
         # Must return only requests (not items).
         for r in start_requests:
-            r.meta['proxy'] = 'http://crystal.ge:9svqswvf@117.48.199.217:16818'
             yield r
 
     def spider_opened(self, spider):

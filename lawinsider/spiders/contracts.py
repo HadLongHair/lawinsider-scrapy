@@ -13,13 +13,13 @@ logging.basicConfig(format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 
-class LawDictionaryScrapy(scrapy.Spider):
-# class LawDictionaryScrapy(RedisSpider):
+# class LawDictionaryScrapy(scrapy.Spider):
+class LawDictionaryScrapy(RedisSpider):
     name = 'law_contracts'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/tags/a']
-    # redis_key = 'contracts:start_urls'
+    # start_urls = ['https://www.lawinsider.com/tags/a']
+    redis_key = 'contracts:start_urls'
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):
@@ -97,20 +97,20 @@ class LawDictionaryScrapy(scrapy.Spider):
 
         # sidebar-similar-contracts
         item['similar_contracts'] = []
-        if ct:
-            similar_contracts = self.get_query(
-                'https://www.lawinsider.com/search/api?type=tag&size=10&q={0}'.format(ct))
-            item['similar_contracts'] = similar_contracts['results']['tag']
+        # if ct:
+        #     similar_contracts = self.get_query(
+        #         'https://www.lawinsider.com/search/api?type=tag&size=10&q={0}'.format(ct))
+        #     item['similar_contracts'] = similar_contracts['results']['tag']
 
         # sidebar-related-clauses-by-tag
         # https://www.lawinsider.com/search/api/aggs?type=clause&size=10&filter=tag:
         item['most_common_clauses'] = []
-        if cc:
-            most_common_clauses = self.get_query(
-                'https://www.lawinsider.com/search/api/aggs?type=clause&size=10&filter=tag:{0}'.format(cc))
-            # print('=====-=-=-=-=-=-=-')
-            # print(most_common_clauses)
-            item['most_common_clauses'] = most_common_clauses
+        # if cc:
+        #     most_common_clauses = self.get_query(
+        #         'https://www.lawinsider.com/search/api/aggs?type=clause&size=10&filter=tag:{0}'.format(cc))
+        #     # print('=====-=-=-=-=-=-=-')
+        #     # print(most_common_clauses)
+        #     item['most_common_clauses'] = most_common_clauses
 
         # items found
         item['items_found'] = []

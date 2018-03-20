@@ -13,13 +13,13 @@ logging.basicConfig(format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 
-# class LawDictionaryScrapy(scrapy.Spider):
-class LawDictionaryScrapy(RedisSpider):
+class LawDictionaryScrapy(scrapy.Spider):
+# class LawDictionaryScrapy(RedisSpider):
     name = 'law_contracts'
 
     allowed_domains = ['www.lawinsider.com']
-    # start_urls = ['https://www.lawinsider.com/tags/a']
-    redis_key = 'contracts:start_urls'
+    start_urls = ['https://www.lawinsider.com/tags/a']
+    # redis_key = 'contracts:start_urls'
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):

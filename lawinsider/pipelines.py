@@ -9,6 +9,7 @@ import pymongo
 class MongoPipeline(object):
 
     collection_name = 'contracts'
+    # collection_name = 'dictionary'
 
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri

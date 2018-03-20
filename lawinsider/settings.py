@@ -70,8 +70,8 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'scrapy_redis.pipelines.RedisPipeline': 310,
-   #  Save MongoDB
+    # 'scrapy_redis.pipelines.RedisPipeline': 310,
+   # Save MongoDB
     'lawinsider.pipelines.MongoPipeline': 300,
    # For test
    # 'lawinsider.pipelines.lawinsiderPipeline': 300,
@@ -108,10 +108,10 @@ MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'lawinsider'
 # MONGO_DATABASE = 'lawinsider_a'
 
-SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
-SCHEDULER_PERSIST = True
-DUPEFILTER_CLASS = 'scrapy_redis.dupefilter.RFPDupeFilter'
-
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = 6379
+# SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
+# SCHEDULER_PERSIST = True
+# DUPEFILTER_CLASS = 'scrapy_redis.dupefilter.RFPDupeFilter'
+#
+# REDIS_HOST = '127.0.0.1'
+# REDIS_PORT = 6379
 # REDIS_PASS = 'password'

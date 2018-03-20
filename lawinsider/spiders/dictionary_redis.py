@@ -93,8 +93,8 @@ class LawDictionaryScrapy(RedisSpider):
         item['contract_tags'] = []
         contract_tag = {}
         try:
-            contract_tags = papers[2].css('h3')
-            contract_tags_text = papers[2]
+            contract_tags = papers[-1].css('h3')
+            contract_tags_text = papers[-1]
             for i in contract_tags:
                 contract_tag['name'] = i.css('a::text').extract_first()
                 contract_tag['url'] = i.css('a::attr(href)').extract_first()

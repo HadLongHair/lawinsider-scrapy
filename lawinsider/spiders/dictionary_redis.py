@@ -12,12 +12,13 @@ logging.basicConfig(format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 
-class LawDictionaryScrapy(RedisSpider):
+# class LawDictionaryScrapy(RedisSpider):
+class LawDictionaryScrapy(scrapy.Spider):
     name = 'law_dictionary'
 
     allowed_domains = ['www.lawinsider.com']
-    # start_urls = ['https://www.lawinsider.com/dictionary/a']
-    redis_key = 'dictionary:start_urls'
+    start_urls = ['https://www.lawinsider.com/dictionary/a']
+    # redis_key = 'dictionary:start_urls'
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):
@@ -54,54 +55,64 @@ class LawDictionaryScrapy(RedisSpider):
 
     def parse_detail(self, response):
         item = response.meta['item']
+        paper1 = None
+        paper2 = None
+        paper3 = None
+
         papers = response.css('.col-lg-9.col-md-9.col-sm-12.col-xs-12 .paper')
-        # Definition
-        item['definition'] = []
-        definition_list = []
-        try:
-            definitions = papers[0].css('ol li.snippet-content::text').extract()
-            for definition in definitions:
-                try:
-                    definition_text = definition.replace('\n', '')
-                    if definition_text:
-                        definition_list.append(item['dictionary'] + definition_text)
-                except Exception as e:
-                    logging.error("No text", e)
-        except:
-            logging.error('No papers')
+        for paper in papers:
+            print('00000000=========00000')
+            if 'Definition of' in ''.join(paper.css('h1::text').extract()):
+                paper1 = paper
+                print('1')
+                # Definition
+                item['definition'] = []
+                definition_list = []
+                definitions = paper1.css('ol li.snippet-content')
+                for definition in definitions:
+                    try:
+                        definition_text = ''.join(definition.css('*::text').extract()).replace('\n', '').strip()
+                        print('==========')
+                        print(definition_text)
+                        if definition_text:
+                            definition_list.append(definition_text)
+                    except Exception as e:
+                        logging.error("No text")
 
-        item['definition'] = definition_list
+                item['definition'] = definition_list
 
-        # examples
-        item['example'] = []
-        example_list = []
-        try:
-            examples = papers[1].css('ol li::text').extract()
-            for example in examples:
-                try:
-                    example_text = example.replace('\n', '')
-                    if example_text:
-                        example_list.append(item['dictionary'] + example_text)
-                except Exception as e:
-                    logging.error("No example text", e)
-        except:
-            logging.error('No papers')
+            if 'Examples of' in ''.join(paper.css('h3::text').extract()):
+                paper2 = paper
+                print('2')
 
-        item['example'] = example_list
+                # examples
+                item['example'] = []
+                example_list = []
+                examples = paper2.css('ol li')
+                for example in examples:
+                    try:
+                        example_text = ''.join(example.css('*::text').extract()).replace('\n', '').strip()
+                        example_list.append(example_text)
+                    except Exception as e:
+                        logging.error("No example text")
 
-        # Contract Tags TODO
-        item['contract_tags'] = []
-        contract_tag = {}
-        try:
-            contract_tags = papers[-1].css('h3')
-            contract_tags_text = papers[-1]
-            for i in contract_tags:
-                contract_tag['name'] = i.css('a::text').extract_first()
-                contract_tag['url'] = i.css('a::attr(href)').extract_first()
-            for j in contract_tags_text:
-                contract_tag['text'] = j.css('string::text').extract_first() + j.css('::text').extract_first()
-        except:
-            pass
+                item['example'] = example_list
+
+            if 'Definition of' in ''.join(paper.css('h3::text').extract()):
+                paper3 = paper
+                print('3')
+
+                # Contract Tags TODO
+                item['contract_tags'] = []
+                contract_tags = paper3.css('h3')
+                for i, ct in enumerate(contract_tags):
+                    contract_tag = {}
+                    contract_tag['name'] = ct.css('a::text').extract_first()
+                    contract_tag['url'] = ct.css('a::attr(href)').extract_first()
+                    print('==========')
+                    print('~~~~~~~~~~')
+                    contract_tag['text'] = ''.join(paper3.css('p')[i].css('*::text').extract()).replace('\n', '').strip()
+                    item['contract_tags'].append(contract_tag)
 
         # Related Definitions
         related_definitions = response.css('.paper-sidebar .list-group .list-group-item a')

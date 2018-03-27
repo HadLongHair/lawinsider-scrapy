@@ -14,11 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 class LawDictionaryScrapy(scrapy.Spider):
-# class LawDictionaryScrapy(RedisSpider):
+    # class LawDictionaryScrapy(RedisSpider):
     name = 'law_contracts'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/tags/a']
+    # start_urls = ['https://www.lawinsider.com/tags/w', 'https://www.lawinsider.com/tags/x',
+    #               'https://www.lawinsider.com/tags/y', 'https://www.lawinsider.com/tags/z']
+    start_urls = ['https://www.lawinsider.com/tags/' + chr(97+i) for i in range(26)]
     # redis_key = 'contracts:start_urls'
     bases = 'https://www.lawinsider.com'
 
@@ -98,7 +100,7 @@ class LawDictionaryScrapy(scrapy.Spider):
         # sidebar-similar-contracts
         item['similar_contracts'] = []
         # if ct:
-        #     similar_contracts = self.get_query(
+        # similar_contracts = self.get_query(
         #         'https://www.lawinsider.com/search/api?type=tag&size=10&q={0}'.format(ct))
         #     item['similar_contracts'] = similar_contracts['results']['tag']
 

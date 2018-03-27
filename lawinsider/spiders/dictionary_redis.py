@@ -14,10 +14,13 @@ logger = logging.getLogger(__name__)
 
 # class LawDictionaryScrapy(RedisSpider):
 class LawDictionaryScrapy(scrapy.Spider):
-    name = 'law_dictionary'
+    name = 'law_dictionary_r'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/dictionary/a']
+    start_urls = ['https://www.lawinsider.com/dictionary/u', 'https://www.lawinsider.com/dictionary/v',
+                  'https://www.lawinsider.com/dictionary/w', 'https://www.lawinsider.com/dictionary/x',
+                  'https://www.lawinsider.com/dictionary/y', 'https://www.lawinsider.com/dictionary/z']
+    # start_urls = ['https://www.lawinsider.com/dictionary/' + chr(97+i) for i in range(26)]
     # redis_key = 'dictionary:start_urls'
     bases = 'https://www.lawinsider.com'
 
@@ -111,7 +114,8 @@ class LawDictionaryScrapy(scrapy.Spider):
                     contract_tag['url'] = ct.css('a::attr(href)').extract_first()
                     print('==========')
                     print('~~~~~~~~~~')
-                    contract_tag['text'] = ''.join(paper3.css('p')[i].css('*::text').extract()).replace('\n', '').strip()
+                    contract_tag['text'] = ''.join(paper3.css('p')[i].css('*::text').extract()).replace('\n',
+                                                                                                        '').strip()
                     item['contract_tags'].append(contract_tag)
 
         # Related Definitions
@@ -121,7 +125,7 @@ class LawDictionaryScrapy(scrapy.Spider):
             # 合同链接1-3
             item['related_definitions'].append({'url': it.css('a::attr(href)').extract_first(),
                                                 'title': it.css('a::text').extract_first()
-                                                })
+            })
 
         item['added_on'] = datetime.utcnow()
         item['last_updated'] = datetime.utcnow()

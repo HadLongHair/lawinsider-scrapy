@@ -99,11 +99,11 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 # LOG_ENABLED = True
-# LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'WARNING'
 # LOG_FILE = 'logfile.log'
 
-# MONGO_URI = 'mongodb://localhost:27017/'
-MONGO_URI = 'mongodb://192.168.203.152:27017/'
+MONGO_URI = 'mongodb://localhost:27017/'
+# MONGO_URI = 'mongodb://192.168.203.152:27017/'
 
 MONGO_DATABASE = 'lawinsider'
 # MONGO_DATABASE = 'lawinsider_a'

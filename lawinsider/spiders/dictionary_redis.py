@@ -17,10 +17,7 @@ class LawDictionaryScrapy(scrapy.Spider):
     name = 'law_dictionary_r'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/dictionary/u', 'https://www.lawinsider.com/dictionary/v',
-                  'https://www.lawinsider.com/dictionary/w', 'https://www.lawinsider.com/dictionary/x',
-                  'https://www.lawinsider.com/dictionary/y', 'https://www.lawinsider.com/dictionary/z']
-    # start_urls = ['https://www.lawinsider.com/dictionary/' + chr(97+i) for i in range(26)]
+    start_urls = ['https://www.lawinsider.com/dictionary/' + chr(97+i) for i in range(26)]
     # redis_key = 'dictionary:start_urls'
     bases = 'https://www.lawinsider.com'
 

@@ -8,7 +8,7 @@ class LawClauseScrapy(scrapy.Spider):
     name = 'law_clause'
 
     allowed_domains = ['www.lawinsider.com']
-    start_urls = ['https://www.lawinsider.com/clauses/a']
+    start_urls = ['https://www.lawinsider.com/clauses/' + chr(97+i) for i in range(26)]
     bases = 'https://www.lawinsider.com'
 
     def parse(self, response):

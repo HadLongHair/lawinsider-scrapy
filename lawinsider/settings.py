@@ -100,7 +100,7 @@ ITEM_PIPELINES = {
 
 # LOG_ENABLED = True
 LOG_LEVEL = 'WARNING'
-# LOG_FILE = 'logfile.log'
+LOG_FILE = 'logfile.log'
 
 MONGO_URI = 'mongodb://localhost:27017/'
 # MONGO_URI = 'mongodb://192.168.203.152:27017/'
